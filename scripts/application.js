@@ -1,5 +1,5 @@
 //get all pokemon sprites, pick 24 randomly, add 2 each to array of strings, go to each td id and randomly pick img from string and set as name property
-var url='http://query.yahooapis.com/v1/public/yql?q=select * from html where url=\'http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number\' and xpath=\'//tr/td[position()mod 4 = 3]/a\'&format=json&callback=?';
+var url='https://query.yahooapis.com/v1/public/yql?q=select * from htmlstring where url=\'http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number\' and xpath=\'//tr/td[position()mod 4 = 3]/a\'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=?';
 var pokemonLinks = [];
 var currGameLinks = [];
 var firstClicked = null;
@@ -7,17 +7,31 @@ var secondClicked = null;
 var turn;
 var player1 = null;
 var player2 = null;
-var pokeball = "PokeMemory/p1.jpg";
+var pokeball = "PokeMemory/p01.jpg";
 var matched = [];
 var vm;
 
 function setTiles(){
     //short hand ajax call
     $.getJSON( url, function(data){
+        //console.log(data.query.results.result);
+        var str = data.query.results.result.split('</a>');
+        //console.log(str[847]);
+        //str[846] = null;
+        //str[845] = null;
+        str.splice(846, 1);
         var i;
-        $.each(data.query.results.a, function(){   
-                console.log(this.img.src);
-                pokemonLinks.push(this.img.src);
+        $.each(str, function(){ 
+        //console.log(this.toString());
+        var index = this.toString().indexOf('src=');
+        var pic = this.toString().substring(index+5, index+48);
+        if(pic.charAt(pic.length - 1) != 'g'){
+            pic = pic + 'g';
+            //console.log("good save");
+        }
+        console.log(pic);  
+                //onsole.log(this.img.src);
+                pokemonLinks.push("https:" + pic);
                     // if(i<50){
                     //     //OK this sets id to the img source
                         
@@ -173,9 +187,9 @@ $(document).ready(function(){
         //console.log(this.innerHTML);
         //attempt at animation
         //myMove();
-        if(player1 == null){
-           $("#login").modal(); 
-        }
+        // if(player1 == null){
+        //    $("#login").modal(); 
+        // }
         
         pokemonLinks = [];
         currGameLinks = [];
@@ -201,9 +215,9 @@ $(document).ready(function(){
     })
     $('#newGame2').on('click',function(){
         //console.log(this.innerHTML);
-        if(player1 == null){
-           $("#login").modal(); 
-        }
+        // if(player1 == null){
+        //    $("#login").modal(); 
+        // }
         pokemonLinks = [];
         currGameLinks = [];
         setTiles();
